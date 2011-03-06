@@ -281,6 +281,43 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 	initGraphics(width, height, defaultTo1xScaler, &format);
 }
 
+#ifdef USE_RGB_COLOR
+PixelFormat getCursorPixelFormat(Common::List<PixelFormat> frontend, byte alphaBits) {
+	// frontends must specify at least one alpha bit, some backends rely on it
+	assert(alphaBits);
+
+	Common::List<PixelFormat> backend = g_system->getSupportedCursorFormats();
+	Common::List<PixelFormat>::const_iterator i, j;
+
+	// search for a direct match
+	for (i = backend.begin(); i != backend.end(); ++i)
+		for (j = frontend.begin(); j != frontend.end(); ++j)
+			if (*i == *j)
+				return *i;
+
+	// search for the desired or more alpha bits
+	for (i = backend.begin(); i != backend.end(); ++i)
+		if (i->aBits() >= alphaBits)
+			return *i;
+
+	// search for a format with at least one alpha bit
+	if (alphaBits > 1)
+		for (i = backend.begin(); i != backend.end(); ++i)
+			if (i->aBits())
+				return *i;
+
+	// the backend doesn't offer a mode with alpha bits, it handles alpha
+	// itself based on 'keycolor'
+	// fallback to what the backend declared as best
+	return backend.front();
+}
+
+PixelFormat getCursorPixelFormat(byte alphaBits) {
+	Common::List<PixelFormat> none;
+	return getCursorPixelFormat(none, alphaBits);
+}
+#endif
+
 void GUIErrorMessage(const Common::String msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();

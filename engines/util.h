@@ -51,4 +51,12 @@ void initGraphics(int width, int height, bool defaultTo1xScaler);
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format);
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList);
 
+#ifdef USE_RGB_COLOR
+/*
+ * Returns the best compatible format for mouse cursors.
+ */
+Graphics::PixelFormat getCursorPixelFormat(Common::List<Graphics::PixelFormat> frontend, byte alphaBits);
+Graphics::PixelFormat getCursorPixelFormat(byte alphaBits);
+#endif
+
 #endif
