@@ -114,7 +114,7 @@ private:
 	// Mouse layer
 	GLESTexture *_mouse_texture;
 	GLESPaletteTexture *_mouse_texture_palette;
-	GLES5551Texture *_mouse_texture_rgb;
+	GLESTexture *_mouse_texture_rgb;
 	Common::Point _mouse_hotspot;
 	int _mouse_targetscale;
 	bool _show_mouse;
@@ -149,7 +149,7 @@ private:
 #ifdef USE_RGB_COLOR
 	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESTexture **texture, uint width, uint height,
-						const Graphics::PixelFormat *format, bool alphaPalette);
+						const Graphics::PixelFormat *format);
 #endif
 
 	void setupKeymapper();

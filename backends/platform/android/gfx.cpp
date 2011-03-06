@@ -25,8 +25,6 @@
 
 #if defined(__ANDROID__)
 
-#include "graphics/conversion.h"
-
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
 
@@ -106,8 +104,7 @@ Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &
 
 void OSystem_Android::initTexture(GLESTexture **texture,
 									uint width, uint height,
-									const Graphics::PixelFormat *format,
-									bool alphaPalette) {
+									const Graphics::PixelFormat *format) {
 	assert(texture);
 	Graphics::PixelFormat format_clut8 =
 		Graphics::PixelFormat::createFormatCLUT8();
@@ -143,10 +140,7 @@ void OSystem_Android::initTexture(GLESTexture **texture,
 				LOGE("unsupported pixel format: %s",
 					getPixelFormatName(format_new).c_str());
 
-			if (alphaPalette)
-				*texture = new GLESPalette8888Texture;
-			else
-				*texture = new GLESPalette888Texture;
+			*texture = new GLESPalette888Texture;
 		}
 
 		LOGD("new pixel format: %s",
@@ -266,7 +260,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 
 #ifdef USE_RGB_COLOR
-	initTexture(&_game_texture, width, height, format, false);
+	initTexture(&_game_texture, width, height, format);
 #else
 	_game_texture->allocBuffer(width, height);
 	_game_texture->fillBuffer(0);
@@ -583,13 +577,20 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 
 	assert(keycolor < 256);
 
+	int pitch = w;
+
 #ifdef USE_RGB_COLOR
 	if (format && format->bytesPerPixel > 1) {
 		if (_mouse_texture != _mouse_texture_rgb)
 			LOGD("switching to rgb mouse cursor");
 
-		_mouse_texture_rgb = new GLES5551Texture();
+		// insist on alpha bits
+		assert(format->aBits());
+		initTexture(&_mouse_texture_rgb, w, h, format);
+
 		_mouse_texture = _mouse_texture_rgb;
+
+		pitch *= 2;
 	} else {
 		if (_mouse_texture != _mouse_texture_palette)
 			LOGD("switching to paletted mouse cursor");
@@ -616,37 +617,7 @@ void OSystem_Android::setMouseCursor(const byte *buf, uint w, uint h,
 	if (w == 0 || h == 0)
 		return;
 
-	if (_mouse_texture == _mouse_texture_palette) {
-		_mouse_texture->updateBuffer(0, 0, w, h, buf, w);
-	} else {
-		uint16 pitch = _mouse_texture->pitch();
-
-		byte *tmp = new byte[pitch * h];
-
-		// meh, a 16bit cursor without alpha bits... this is so silly
-		if (!crossBlit(tmp, buf, pitch, w * 2, w, h,
-						_mouse_texture->getPixelFormat(),
-						*format)) {
-			LOGE("crossblit failed");
-
-			delete[] tmp;
-
-			_mouse_texture->fillBuffer(0);
-
-			return;
-		}
-
-		uint16 *s = (uint16 *)buf;
-		uint16 *d = (uint16 *)tmp;
-		for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
-			for (uint16 x = 0; x < w; ++x, d++)
-				if (*s++ != (keycolor & 0xffff))
-					*d |= 1;
-
-		_mouse_texture->updateBuffer(0, 0, w, h, tmp, pitch);
-
-		delete[] tmp;
-	}
+	_mouse_texture->updateBuffer(0, 0, w, h, buf, pitch);
 
 	_mouse_hotspot = Common::Point(hotspotX, hotspotY);
 	_mouse_targetscale = cursorTargetScale;
