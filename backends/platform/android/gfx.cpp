@@ -79,6 +79,14 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 	return res;
 }
 
+Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedCursorFormats() const {
+	Common::List<Graphics::PixelFormat> res;
+	res.push_back(GLES5551Texture::getPixelFormat());
+	res.push_back(GLES4444Texture::getPixelFormat());
+
+	return res;
+}
+
 Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &format) const {
 	if (format.bytesPerPixel == 1)
 		return "CLUT8";

@@ -176,6 +176,7 @@ public:
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedCursorFormats() const;
 #endif
 
 	virtual void initSize(uint width, uint height,
