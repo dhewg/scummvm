@@ -47,12 +47,8 @@ uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
 	return NULL;
 }
 
-uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
-	uint16 ar = (r >> 3) << 10;
-	uint16 ag = (g >> 3) <<  5;
-	uint16 ab = (b >> 3) <<  0;
-	uint16 col = ar | ag | ab;
-	return col;
+uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b, uint8 a) {
+	return _screenPixelFormat.ARGBToColor(a, r, g, b);
 }
 
 void ScummEngine::resetPalette() {

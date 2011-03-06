@@ -35,6 +35,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
 
@@ -989,6 +990,9 @@ public:
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel;
 	uint8 _bytesPerPixelOutput;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenPixelFormat;
+#endif
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
@@ -1073,7 +1077,7 @@ protected:
 	void palManipulate();
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
-	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
+	uint16 get16BitColor(uint8 r, uint8 g, uint8 b, uint8 a = 0xff);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
 	void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b);

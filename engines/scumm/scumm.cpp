@@ -1152,10 +1152,9 @@ Common::Error ScummEngine::init() {
 #endif
 			) {
 #ifdef USE_RGB_COLOR
-			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
-			if (format != _system->getScreenFormat())
-				return Common::kUnsupportedColorMode;
+			// let the backend choose its prefered pixel format
+			initGraphics(screenWidth, screenHeight, screenWidth > 320, 0);
+			_screenPixelFormat = _system->getScreenFormat();
 #else
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
