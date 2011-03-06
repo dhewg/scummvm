@@ -404,6 +404,15 @@ public:
 	 *       order, even if hardware uses BGR or some other color order.
 	 */
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+
+	/*
+	 * Same as getSupportedFormats, just for mouse cursors
+	 * The default implementation returns the list with just the current screen
+	 * format.
+	 *
+	 * @see getSupportedFormats
+	 */
+	virtual Common::List<Graphics::PixelFormat> getSupportedCursorFormats() const;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();

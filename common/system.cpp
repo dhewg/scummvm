@@ -93,3 +93,14 @@ void OSystem::logMessage(LogMessageType::Type type, const char *message) {
 Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
 }
+
+#ifdef USE_RGB_COLOR
+Common::List<Graphics::PixelFormat> OSystem::getSupportedCursorFormats() const {
+	// old behavior
+	Common::List<Graphics::PixelFormat> list;
+	list.push_back(getScreenFormat());
+
+	return list;
+}
+#endif
+
