@@ -1155,6 +1155,7 @@ Common::Error ScummEngine::init() {
 			// let the backend choose its prefered pixel format
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, 0);
 			_screenPixelFormat = _system->getScreenFormat();
+			_cursorPixelFormat = getCursorPixelFormat(1);
 #else
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");

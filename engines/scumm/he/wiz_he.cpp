@@ -1504,6 +1504,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TCOLOR)) : 5;
 
 		if (_vm->_bytesPerPixel == 2) {
+			transColor = _vm->getCursor16BitFillColor(transColor);
 			uint8 *tmpPtr = dst;
 			for (uint i = 0; i < height; i++) {
 				for (uint j = 0; j < width; j++) {

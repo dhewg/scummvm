@@ -117,12 +117,11 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 void ScummEngine::updateCursor() {
 	int transColor = (_game.heversion >= 80) ? 5 : 255;
 #ifdef USE_RGB_COLOR
-	Graphics::PixelFormat format = _system->getScreenFormat();
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_game.heversion == 70 ? 2 : 1),
-							&format);
+							&_cursorPixelFormat);
 #else
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
@@ -181,8 +180,10 @@ void ScummEngine_v70he::setDefaultCursor() {
 								   0,    0,    0,    };
 
 	if (_bytesPerPixel == 2) {
+		uint16 fill = getCursor16BitFillColor(5);
+
 		for (i = 0; i < 1024; i++)
-			WRITE_UINT16(_grabbedCursor + i * 2, 5);
+			WRITE_UINT16(_grabbedCursor + i * 2, fill);
 	} else {
 		memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
 	}
@@ -199,13 +200,13 @@ void ScummEngine_v70he::setDefaultCursor() {
 			switch ((p & (0x3 << 14)) >> 14) {
 				case 1:
 					if (_bytesPerPixel == 2)
-						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[4], palette[5], palette[6]));
+						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, getCursor16BitColor(palette[4], palette[5], palette[6]));
 					else
 						_grabbedCursor[32 * i + j] = 0xfe;
 					break;
 				case 2:
 					if (_bytesPerPixel == 2)
-						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[0], palette[1], palette[2]));
+						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, getCursor16BitColor(palette[0], palette[1], palette[2]));
 					else
 						_grabbedCursor[32 * i + j] = 0xfd;
 					break;
@@ -558,18 +559,19 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 			byte r, g, b;
 			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
-			color = get16BitColor(r, g, b);
+			color = getCursor16BitColor(r, g, b);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		} else if (_game.platform == Common::kPlatformFMTowns) {
 			byte *palEntry = &_textPalette[default_cursor_colors[idx] * 3];
-			color = get16BitColor(palEntry[0], palEntry[1], palEntry[2]);
+			color = getCursor16BitColor(palEntry[0], palEntry[1], palEntry[2]);
 #endif
 		} else {
 			color = _16BitPalette[default_cursor_colors[idx]];
 		}
 
+		uint16 fill = getCursor16BitFillColor(0xff);
 		for (i = 0; i < 1024; i++)
-			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
+			WRITE_UINT16(_grabbedCursor + i * 2, fill);
 	} else {
 		color = default_cursor_colors[idx];
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));

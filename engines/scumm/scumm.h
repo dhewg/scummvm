@@ -992,6 +992,7 @@ public:
 	uint8 _bytesPerPixelOutput;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenPixelFormat;
+	Graphics::PixelFormat _cursorPixelFormat;
 #endif
 
 protected:
@@ -1078,6 +1079,8 @@ protected:
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b, uint8 a = 0xff);
+	uint16 getCursor16BitColor(uint8 r, uint8 g, uint8 b, uint8 a = 0xff);
+	uint16 getCursor16BitFillColor(uint16 fill);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
 	void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b);

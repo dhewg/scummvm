@@ -48,7 +48,33 @@ uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
 }
 
 uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b, uint8 a) {
+#ifdef USE_RGB_COLOR
 	return _screenPixelFormat.ARGBToColor(a, r, g, b);
+#else
+	assert(false);
+	return 0;
+#endif
+}
+
+uint16 ScummEngine::getCursor16BitColor(uint8 r, uint8 g, uint8 b, uint8 a) {
+#ifdef USE_RGB_COLOR
+	return _cursorPixelFormat.ARGBToColor(a, r, g, b);
+#else
+	assert(false);
+	return 0;
+#endif
+}
+
+uint16 ScummEngine::getCursor16BitFillColor(uint16 fill) {
+#ifdef USE_RGB_COLOR
+	// fill only with the keycolor (old behavior) when we have no alpha bits
+	if (_cursorPixelFormat.aBits())
+		return getCursor16BitColor(0, 0, 0, 0);
+	else
+		return fill;
+#else
+	return fill;
+#endif
 }
 
 void ScummEngine::resetPalette() {
